@@ -103,7 +103,7 @@ pub fn main(init: std.process.Init) Error!void {
         .environ_map = &environ_map,
         .zig_exe_path = zig_exe_path,
         .zig_lib_dir = zig_lib_dir,
-        .zig_cache_dir = switch (builtin.os.tag) {
+        .zig_cache_dir = switch (builtin.target.os.tag) {
             .wasi => {},
             else => null,
         },

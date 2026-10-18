@@ -14,7 +14,7 @@ const Uri = @This();
 raw: []const u8,
 
 pub fn parse(allocator: std.mem.Allocator, text: []const u8) (std.Uri.ParseError || error{OutOfMemory})!Uri {
-    return try parseWithOs(allocator, text, builtin.os.tag == .windows);
+    return try parseWithOs(allocator, text, builtin.target.os.tag == .windows);
 }
 
 fn parseWithOs(
@@ -186,7 +186,7 @@ const Context = struct {
 /// Converts a file system path to a Uri.
 /// Caller owns the returned memory
 pub fn fromPath(allocator: std.mem.Allocator, path: []const u8) error{OutOfMemory}!Uri {
-    return try fromPathWithOs(allocator, path, builtin.os.tag == .windows);
+    return try fromPathWithOs(allocator, path, builtin.target.os.tag == .windows);
 }
 
 fn fromPathWithOs(
@@ -338,7 +338,7 @@ pub fn toFsPath(
     uri: Uri,
     allocator: std.mem.Allocator,
 ) error{ UnsupportedScheme, OutOfMemory }![]u8 {
-    return try toFsPathWithOs(uri, allocator, builtin.os.tag == .windows);
+    return try toFsPathWithOs(uri, allocator, builtin.target.os.tag == .windows);
 }
 
 /// Based on `std.ArrayList.printAssumeCapacity`

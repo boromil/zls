@@ -719,9 +719,9 @@ pub const BuildOnSave = struct {
     pub const FileWatchSupport = union(enum) {
         supported,
         /// https://codeberg.org/ziglang/zig/issues/37236
-        is_windows: if (builtin.os.tag == .windows) void else noreturn,
-        invalid_linux_kernel_version: if (builtin.os.tag == .linux) @FieldType(std.os.linux.utsname, "release") else noreturn,
-        unsupported_linux_kernel_version: if (builtin.os.tag == .linux) std.SemanticVersion else noreturn,
+        is_windows: if (builtin.target.os.tag == .windows) void else noreturn,
+        invalid_linux_kernel_version: if (builtin.target.os.tag == .linux) @FieldType(std.os.linux.utsname, "release") else noreturn,
+        unsupported_linux_kernel_version: if (builtin.target.os.tag == .linux) std.SemanticVersion else noreturn,
 
         /// std.build.Watch requires `AT_HANDLE_FID` which is Linux 6.5+
         /// https://github.com/ziglang/zig/issues/20720
@@ -732,9 +732,9 @@ pub const BuildOnSave = struct {
             _ = runtime_zig_version;
 
             // https://codeberg.org/ziglang/zig/issues/37236
-            if (builtin.os.tag == .windows) return .is_windows;
+            if (builtin.target.os.tag == .windows) return .is_windows;
 
-            if (builtin.os.tag == .linux) blk: {
+            if (builtin.target.os.tag == .linux) blk: {
                 var utsname: std.os.linux.utsname = undefined;
                 std.debug.assert(std.os.linux.uname(&utsname) == 0);
                 const unparsed_version = std.mem.sliceTo(&utsname.release, 0);

@@ -21,7 +21,7 @@ pub const Manager = struct {
         supported: bool,
     },
     zig_lib_dir: ?std.Build.Cache.Directory,
-    zig_cache_dir: switch (builtin.os.tag) {
+    zig_cache_dir: switch (builtin.target.os.tag) {
         .wasi => void,
         else => ?std.Build.Cache.Directory,
     },
@@ -46,7 +46,7 @@ pub const Manager = struct {
             .environ_map = environ_map,
             .zig_exe = null,
             .zig_lib_dir = null,
-            .zig_cache_dir = switch (builtin.os.tag) {
+            .zig_cache_dir = switch (builtin.target.os.tag) {
                 .wasi => {},
                 else => null,
             },
@@ -64,7 +64,7 @@ pub const Manager = struct {
     pub fn deinit(manager: *Manager) void {
         const io = manager.io;
         const allocator = manager.allocator;
-        if (builtin.os.tag != .wasi) {
+        if (builtin.target.os.tag != .wasi) {
             if (manager.zig_lib_dir) |*zig_lib_dir| zig_lib_dir.handle.close(io);
             if (manager.zig_cache_dir) |*zig_cache_dir| zig_cache_dir.handle.close(io);
             if (manager.global_cache_dir) |*global_cache_dir| global_cache_dir.handle.close(io);
@@ -143,8 +143,8 @@ pub const Manager = struct {
         const io = manager.io;
 
         var config: Config = .{
-            .zig_lib_path = if (builtin.os.tag == .wasi) "/lib" else null,
-            .global_cache_path = if (builtin.os.tag == .wasi) "/cache" else null,
+            .zig_lib_path = if (builtin.target.os.tag == .wasi) "/lib" else null,
+            .global_cache_path = if (builtin.target.os.tag == .wasi) "/cache" else null,
         };
         for (manager.impl.configs.values) |unresolved_config| {
             inline for (@typeInfo(UnresolvedConfig).@"struct".field_names) |field_name| {
@@ -336,7 +336,7 @@ pub const Manager = struct {
         config: *Config,
         messages: *std.ArrayList([]const u8),
     ) error{ Canceled, OutOfMemory }!void {
-        if (builtin.os.tag == .wasi) return;
+        if (builtin.target.os.tag == .wasi) return;
 
         var values: [file_system_config_options.len]*?[]const u8 = undefined;
         inline for (file_system_config_options, &values) |file_config, *value| {

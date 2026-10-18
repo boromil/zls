@@ -40,7 +40,7 @@ pub const Config = struct {
     environ_map: *const std.process.Environ.Map,
     zig_exe_path: ?[]const u8,
     zig_lib_dir: ?std.Build.Cache.Directory,
-    zig_cache_dir: switch (builtin.os.tag) {
+    zig_cache_dir: switch (builtin.target.os.tag) {
         .wasi => void,
         else => ?std.Build.Cache.Directory,
     },
